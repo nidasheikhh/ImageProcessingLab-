@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practical 09 | IMAGE LAB</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#080b14;
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    padding:25px 8%;
+    border-bottom:1px solid rgba(0,229,255,.2);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.logo span,h1 span{
+    color:#00e5ff;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:40px auto;
+}
+
+.back{
+    color:#00e5ff;
+    text-decoration:none;
+    display:inline-block;
+    margin-bottom:25px;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.tag{
+    color:#00e5ff;
+    letter-spacing:2px;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+h1{
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.aim{
+    color:#aab3c2;
+    max-width:750px;
+    margin:auto;
+    line-height:1.6;
+}
+
+.panel{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(0,229,255,.2);
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:30px;
+}
+
+.panel h2{
+    color:#00e5ff;
+    margin-bottom:20px;
+}
+
+.uploads{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.upload-box label{
+    display:block;
+    color:#00e5ff;
+    margin-bottom:8px;
+    font-weight:bold;
+}
+
+input[type=file]{
+    width:100%;
+    padding:12px;
+    background:#111725;
+    color:white;
+    border-radius:10px;
+    border:1px solid #263247;
+    margin-bottom:20px;
+}
+
+.buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+button{
+    padding:11px 20px;
+    border:1px solid #00e5ff;
+    background:transparent;
+    color:#00e5ff;
+    border-radius:25px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#00e5ff;
+    color:#080b14;
+    transform:translateY(-2px);
+}
+
+.image-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.image-box{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(0,229,255,.2);
+    border-radius:18px;
+    padding:20px;
+    text-align:center;
+}
+
+.image-box h3{
+    color:#00e5ff;
+    margin-bottom:15px;
+}
+
+canvas{
+    width:100%;
+    max-height:450px;
+    object-fit:contain;
+    background:#111725;
+    border-radius:10px;
+}
+
+.info{
+    margin-top:15px;
+    color:#aab3c2;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.score{
+    margin-top:12px;
+    color:#00e5ff;
+    font-weight:bold;
+}
+
+.practical-navigation{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin:50px auto 30px;
+    flex-wrap:wrap;
+}
+
+.nav-btn{
+    padding:12px 25px;
+    border:1px solid #00e5ff;
+    border-radius:30px;
+    color:#00e5ff;
+    text-decoration:none;
+    font-weight:600;
+    transition:.3s;
+}
+
+.nav-btn:hover{
+    background:#00e5ff;
+    color:#080b14;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    margin-top:40px;
+    border-top:1px solid rgba(0,229,255,.15);
+    color:#8e98a8;
+    line-height:1.8;
+}
+
+footer span{
+    color:#00e5ff;
+}
+
+@media(max-width:750px){
+    .uploads,
+    .image-grid{
+        grid-template-columns:1fr;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    button{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        IMAGE<span>LAB</span>
+    </div>
+</header>
+
+<main class="container">
+
+<a href="../index.html" class="back">
+    ← Back to Home
+</a>
+
+<div class="title">
+
+    <p class="tag">PRACTICAL 09</p>
+
+    <h1>
+        Object Detection using <span>Correlation</span>
+    </h1>
+
+    <p class="aim">
+        Detect an object in an image by comparing the image
+        with a template using the correlation principle.
+    </p>
+
+</div>
+
+
+<div class="panel">
+
+    <h2>Upload Images</h2>
+
+    <div class="uploads">
+
+        <div class="upload-box">
+
+            <label>Main Image</label>
+
+            <input
+                type="file"
+                id="mainUpload"
+                accept="image/*"
+            >
+
+        </div>
+
+        <div class="upload-box">
+
+            <label>Template Image</label>
+
+            <input
+                type="file"
+                id="templateUpload"
+                accept="image/*"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="buttons">
+
+        <button onclick="detectObject()">
+            Detect Object
+        </button>
+
+        <button onclick="resetImage()">
+            Reset
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="image-grid">
+
+    <div class="image-box">
+
+        <h3>Main Image</h3>
+
+        <canvas id="mainCanvas"></canvas>
+
+        <div class="info" id="mainInfo">
+            Upload the main image.
+        </div>
+
+    </div>
+
+
+    <div class="image-box">
+
+        <h3>Detection Result</h3>
+
+        <canvas id="resultCanvas"></canvas>
+
+        <div class="info" id="resultInfo">
+            Upload both images and click Detect Object.
+        </div>
+
+        <div class="score" id="score"></div>
+
+    </div>
+
+</div>
+
+
+<div class="practical-navigation">
+
+    <a href="../index.html" class="nav-btn">
+        ← Home
+    </a>
+
+    <a href="prac8.html" class="nav-btn">
+        ← Previous
+    </a>
+
+    <a href="prac10.html" class="nav-btn">
+        Next →
+    </a>
+
+</div>
+
+</main>
+
+
+<footer>
+
+<p>IMAGE<span>LAB</span></p>
+
+<p>Image Processing Techniques</p>
+
+<p>Nida Sheikh | CS25D020</p>
+
+</footer>
+
+
+<script>
+
+const mainUpload =
+document.getElementById("mainUpload");
+
+const templateUpload =
+document.getElementById("templateUpload");
+
+const mainCanvas =
+document.getElementById("mainCanvas");
+
+const resultCanvas =
+document.getElementById("resultCanvas");
+
+const mainCtx =
+mainCanvas.getContext("2d");
+
+const resultCtx =
+resultCanvas.getContext("2d");
+
+let mainImage = null;
+let templateImage = null;
+
+
+// ================= MAIN IMAGE =================
+
+mainUpload.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    mainImage = new Image();
+
+    mainImage.onload = function(){
+
+        mainCanvas.width = mainImage.width;
+        mainCanvas.height = mainImage.height;
+
+        resultCanvas.width = mainImage.width;
+        resultCanvas.height = mainImage.height;
+
+        mainCtx.drawImage(
+            mainImage,
+            0,
+            0
+        );
+
+        resultCtx.drawImage(
+            mainImage,
+            0,
+            0
+        );
+
+        document.getElementById(
+            "mainInfo"
+        ).innerText =
+        `Size: ${mainImage.width} × ${mainImage.height}`;
+
+    };
+
+    mainImage.src =
+    URL.createObjectURL(file);
+
+});
+
+
+// ================= TEMPLATE =================
+
+templateUpload.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    templateImage = new Image();
+
+    templateImage.onload = function(){
+
+        document.getElementById(
+            "resultInfo"
+        ).innerText =
+        `Template size: ${templateImage.width} × ${templateImage.height}`;
+
+    };
+
+    templateImage.src =
+    URL.createObjectURL(file);
+
+});
+
+
+// ================= CHECK =================
+
+function checkImages(){
+
+    if(!mainImage){
+
+        alert("Please upload the main image first.");
+
+        return false;
+    }
+
+    if(!templateImage){
+
+        alert("Please upload the template image.");
+
+        return false;
+    }
+
+    if(
+        templateImage.width > mainImage.width ||
+        templateImage.height > mainImage.height
+    ){
+
+        alert(
+            "Template image must be smaller than the main image."
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+
+// ================= GRAYSCALE =================
+
+function getGrayData(
+    ctx,
+    width,
+    height
+){
+
+    const data =
+    ctx.getImageData(
+        0,
+        0,
+        width,
+        height
+    ).data;
+
+    const gray =
+    new Float32Array(
+        width * height
+    );
+
+    for(
+        let i = 0;
+        i < gray.length;
+        i++
+    ){
+
+        const p = i * 4;
+
+        gray[i] =
+        0.299 * data[p] +
+        0.587 * data[p + 1] +
+        0.114 * data[p + 2];
+    }
+
+    return gray;
+}
+
+
+// ================= CORRELATION =================
+
+function correlation(
+    main,
+    template,
+    mw,
+    tw,
+    th,
+    x,
+    y
+){
+
+    let sumM = 0;
+    let sumT = 0;
+
+    const n = tw * th;
+
+    for(
+        let j = 0;
+        j < th;
+        j++
+    ){
+
+        for(
+            let i = 0;
+            i < tw;
+            i++
+        ){
+
+            const m =
+            main[
+                (y + j) * mw + (x + i)
+            ];
+
+            const t =
+            template[
+                j * tw + i
+            ];
+
+            sumM += m;
+            sumT += t;
+        }
+    }
+
+    const meanM =
+    sumM / n;
+
+    const meanT =
+    sumT / n;
+
+    let numerator = 0;
+    let denM = 0;
+    let denT = 0;
+
+    for(
+        let j = 0;
+        j < th;
+        j++
+    ){
+
+        for(
+            let i = 0;
+            i < tw;
+            i++
+        ){
+
+            const m =
+            main[
+                (y + j) * mw + (x + i)
+            ] - meanM;
+
+            const t =
+            template[
+                j * tw + i
+            ] - meanT;
+
+            numerator += m * t;
+            denM += m * m;
+            denT += t * t;
+        }
+    }
+
+    const denominator =
+    Math.sqrt(
+        denM * denT
+    );
+
+    if(denominator === 0)
+        return 0;
+
+    return numerator / denominator;
+}
+
+
+// ================= DETECTION =================
+
+function detectObject(){
+
+    if(!checkImages()) return;
+
+    const mw =
+    mainCanvas.width;
+
+    const mh =
+    mainCanvas.height;
+
+    const tw =
+    templateImage.width;
+
+    const th =
+    templateImage.height;
+
+
+    const tempCanvas =
+    document.createElement("canvas");
+
+    tempCanvas.width = tw;
+    tempCanvas.height = th;
+
+    const tempCtx =
+    tempCanvas.getContext("2d");
+
+    tempCtx.drawImage(
+        templateImage,
+        0,
+        0
+    );
+
+
+    const mainGray =
+    getGrayData(
+        mainCtx,
+        mw,
+        mh
+    );
+
+    const templateGray =
+    getGrayData(
+        tempCtx,
+        tw,
+        th
+    );
+
+
+    let bestScore = -Infinity;
+
+    let bestX = 0;
+    let bestY = 0;
+
+
+    /*
+       Step size makes the browser
+       calculation faster.
+    */
+
+    const step = 4;
+
+
+    for(
+        let y = 0;
+        y <= mh - th;
+        y += step
+    ){
+
+        for(
+            let x = 0;
+            x <= mw - tw;
+            x += step
+        ){
+
+            const score =
+            correlation(
+                mainGray,
+                templateGray,
+                mw,
+                tw,
+                th,
+                x,
+                y
+            );
+
+            if(
+                score > bestScore
+            ){
+
+                bestScore = score;
+
+                bestX = x;
+                bestY = y;
+            }
+        }
+    }
+
+
+    // Draw original image
+
+    resultCtx.drawImage(
+        mainImage,
+        0,
+        0
+    );
+
+
+    // Detection rectangle
+
+    resultCtx.strokeStyle =
+    "#00e5ff";
+
+    resultCtx.lineWidth = 5;
+
+    resultCtx.strokeRect(
+        bestX,
+        bestY,
+        tw,
+        th
+    );
+
+
+    // Label
+
+    resultCtx.fillStyle =
+    "#00e5ff";
+
+    resultCtx.font =
+    "bold 18px Arial";
+
+    resultCtx.fillText(
+        "Object Detected",
+        bestX,
+        Math.max(
+            22,
+            bestY - 8
+        )
+    );
+
+
+    document.getElementById(
+        "resultInfo"
+    ).innerText =
+    `Detected position: X = ${bestX}, Y = ${bestY}`;
+
+
+    document.getElementById(
+        "score"
+    ).innerText =
+    `Correlation Score: ${(bestScore * 100).toFixed(2)}%`;
+
+}
+
+
+// ================= RESET =================
+
+function resetImage(){
+
+    if(!mainImage) return;
+
+    mainCtx.drawImage(
+        mainImage,
+        0,
+        0
+    );
+
+    resultCtx.drawImage(
+        mainImage,
+        0,
+        0
+    );
+
+    document.getElementById(
+        "mainInfo"
+    ).innerText =
+    `Size: ${mainImage.width} × ${mainImage.height}`;
+
+    document.getElementById(
+        "resultInfo"
+    ).innerText =
+    "Detection result cleared.";
+
+    document.getElementById(
+        "score"
+    ).innerText = "";
+
+}
+
+</script>
+
+</body>
+</html>

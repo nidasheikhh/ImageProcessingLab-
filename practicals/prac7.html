@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Practical 07 | IMAGE LAB</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #080b14;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    padding: 25px 8%;
+    border-bottom: 1px solid rgba(0,229,255,0.2);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span,
+.title h1 span {
+    color: #00e5ff;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.back {
+    color: #00e5ff;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.tag {
+    color: #00e5ff;
+    letter-spacing: 2px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.title h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.aim {
+    color: #aab3c2;
+    max-width: 750px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.panel h2 {
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: #111725;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid #263247;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+button {
+    padding: 11px 18px;
+    border: 1px solid #00e5ff;
+    background: transparent;
+    color: #00e5ff;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-2px);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.image-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+}
+
+.image-box h3 {
+    color: #00e5ff;
+    margin-bottom: 15px;
+}
+
+canvas {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    background: #111725;
+    border-radius: 10px;
+}
+
+.info {
+    margin-top: 15px;
+    color: #aab3c2;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.stats {
+    margin-top: 25px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.stat {
+    background: #111725;
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat h3 {
+    color: #00e5ff;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.stat p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.note {
+    margin-top: 20px;
+    color: #8e98a8;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.practical-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 50px auto 30px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 12px 25px;
+    border: 1px solid #00e5ff;
+    border-radius: 30px;
+    color: #00e5ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-3px);
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(0,229,255,0.15);
+    color: #8e98a8;
+    line-height: 1.8;
+}
+
+footer span {
+    color: #00e5ff;
+}
+
+@media (max-width: 800px) {
+
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .title h1 {
+        font-size: 28px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        IMAGE<span>LAB</span>
+    </div>
+</header>
+
+<main class="container">
+
+<a href="../index.html" class="back">
+    ← Back to Home
+</a>
+
+<div class="title">
+
+    <p class="tag">PRACTICAL 07</p>
+
+    <h1>
+        Lossless <span>Compression</span>
+    </h1>
+
+    <p class="aim">
+        Compress an image without losing its original pixel information
+        and compare the original and compressed file sizes.
+    </p>
+
+</div>
+
+
+<div class="panel">
+
+    <h2>Upload & Compress Image</h2>
+
+    <input
+        type="file"
+        id="upload"
+        accept="image/*"
+    >
+
+    <div class="buttons">
+
+        <button onclick="compressImage()">
+            Compress Image
+        </button>
+
+        <button onclick="downloadCompressed()">
+            Download Compressed
+        </button>
+
+        <button onclick="resetImage()">
+            Reset
+        </button>
+
+    </div>
+
+    <p class="note">
+        The browser uses PNG encoding for lossless compression.
+        Depending on the original format, the compressed file can
+        sometimes be larger than the original.
+    </p>
+
+</div>
+
+
+<div class="result-grid">
+
+    <div class="image-box">
+
+        <h3>Original Image</h3>
+
+        <canvas id="originalCanvas"></canvas>
+
+        <div class="info" id="originalInfo">
+            Upload an image to begin.
+        </div>
+
+    </div>
+
+
+    <div class="image-box">
+
+        <h3>Compressed Image</h3>
+
+        <canvas id="compressedCanvas"></canvas>
+
+        <div class="info" id="compressedInfo">
+            Compressed image will appear here.
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <h3>Original Size</h3>
+
+        <p id="originalSize">
+            —
+        </p>
+
+    </div>
+
+
+    <div class="stat">
+
+        <h3>Compressed Size</h3>
+
+        <p id="compressedSize">
+            —
+        </p>
+
+    </div>
+
+
+    <div class="stat">
+
+        <h3>Compression Ratio</h3>
+
+        <p id="ratio">
+            —
+        </p>
+
+    </div>
+
+
+    <div class="stat">
+
+        <h3>Size Change</h3>
+
+        <p id="reduction">
+            —
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="practical-navigation">
+
+    <a href="../index.html" class="nav-btn">
+        ← Home
+    </a>
+
+    <a href="prac6.html" class="nav-btn">
+        ← Previous
+    </a>
+
+    <a href="prac8.html" class="nav-btn">
+        Next →
+    </a>
+
+</div>
+
+</main>
+
+
+<footer>
+
+<p>IMAGE<span>LAB</span></p>
+
+<p>Image Processing Techniques</p>
+
+<p>Nida Sheikh | CS25D020</p>
+
+</footer>
+
+
+<script>
+
+const upload =
+document.getElementById("upload");
+
+const originalCanvas =
+document.getElementById("originalCanvas");
+
+const compressedCanvas =
+document.getElementById("compressedCanvas");
+
+const originalCtx =
+originalCanvas.getContext("2d");
+
+const compressedCtx =
+compressedCanvas.getContext("2d");
+
+let image = null;
+let originalFile = null;
+let compressedBlob = null;
+
+
+// ================= UPLOAD =================
+
+upload.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    originalFile = file;
+
+    image = new Image();
+
+    image.onload = function() {
+
+        originalCanvas.width =
+        image.width;
+
+        originalCanvas.height =
+        image.height;
+
+        compressedCanvas.width =
+        image.width;
+
+        compressedCanvas.height =
+        image.height;
+
+        originalCtx.drawImage(
+            image,
+            0,
+            0
+        );
+
+        compressedCtx.clearRect(
+            0,
+            0,
+            compressedCanvas.width,
+            compressedCanvas.height
+        );
+
+        document.getElementById(
+            "originalInfo"
+        ).innerText =
+        `Format: ${file.type || "Unknown"} | ` +
+        `Dimensions: ${image.width} × ${image.height}`;
+
+        document.getElementById(
+            "compressedInfo"
+        ).innerText =
+        "Click Compress Image to create the lossless PNG.";
+
+        document.getElementById(
+            "originalSize"
+        ).innerText =
+        formatBytes(file.size);
+
+        document.getElementById(
+            "compressedSize"
+        ).innerText =
+        "—";
+
+        document.getElementById(
+            "ratio"
+        ).innerText =
+        "—";
+
+        document.getElementById(
+            "reduction"
+        ).innerText =
+        "—";
+
+        compressedBlob = null;
+
+    };
+
+    image.src =
+    URL.createObjectURL(file);
+
+});
+
+
+// ================= COMPRESS =================
+
+function compressImage() {
+
+    if (!image) {
+
+        alert(
+            "Please upload an image first."
+        );
+
+        return;
+    }
+
+    compressedCanvas.width =
+    image.width;
+
+    compressedCanvas.height =
+    image.height;
+
+    compressedCtx.clearRect(
+        0,
+        0,
+        compressedCanvas.width,
+        compressedCanvas.height
+    );
+
+    compressedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+
+    compressedCanvas.toBlob(
+        function(blob) {
+
+            if (!blob) {
+
+                alert(
+                    "Compression failed."
+                );
+
+                return;
+            }
+
+            compressedBlob = blob;
+
+            const originalBytes =
+            originalFile.size;
+
+            const compressedBytes =
+            blob.size;
+
+            const ratio =
+            originalBytes / compressedBytes;
+
+            const change =
+            ((originalBytes - compressedBytes)
+            / originalBytes) * 100;
+
+
+            document.getElementById(
+                "compressedSize"
+            ).innerText =
+            formatBytes(compressedBytes);
+
+
+            document.getElementById(
+                "ratio"
+            ).innerText =
+            ratio.toFixed(2) + " : 1";
+
+
+            if (change >= 0) {
+
+                document.getElementById(
+                    "reduction"
+                ).innerText =
+                change.toFixed(2) + "% smaller";
+
+            } else {
+
+                document.getElementById(
+                    "reduction"
+                ).innerText =
+                Math.abs(change).toFixed(2) +
+                "% larger";
+            }
+
+
+            document.getElementById(
+                "compressedInfo"
+            ).innerText =
+            "Lossless PNG compression completed.";
+
+        },
+        "image/png"
+    );
+}
+
+
+// ================= DOWNLOAD =================
+
+function downloadCompressed() {
+
+    if (!compressedBlob) {
+
+        alert(
+            "Please compress the image first."
+        );
+
+        return;
+    }
+
+    const url =
+    URL.createObjectURL(compressedBlob);
+
+    const link =
+    document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+    "compressed_image.png";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+}
+
+
+// ================= FORMAT BYTES =================
+
+function formatBytes(bytes) {
+
+    if (bytes === 0)
+        return "0 Bytes";
+
+    const units = [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+    ];
+
+    const i =
+    Math.floor(
+        Math.log(bytes) /
+        Math.log(1024)
+    );
+
+    return (
+        parseFloat(
+            (bytes /
+            Math.pow(1024, i))
+            .toFixed(2)
+        )
+        + " " +
+        units[i]
+    );
+}
+
+
+// ================= RESET =================
+
+function resetImage() {
+
+    if (!image) {
+
+        alert(
+            "Please upload an image first."
+        );
+
+        return;
+    }
+
+    originalCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    compressedCtx.clearRect(
+        0,
+        0,
+        compressedCanvas.width,
+        compressedCanvas.height
+    );
+
+    document.getElementById(
+        "originalSize"
+    ).innerText =
+    formatBytes(originalFile.size);
+
+    document.getElementById(
+        "compressedSize"
+    ).innerText =
+    "—";
+
+    document.getElementById(
+        "ratio"
+    ).innerText =
+    "—";
+
+    document.getElementById(
+        "reduction"
+    ).innerText =
+    "—";
+
+    document.getElementById(
+        "compressedInfo"
+    ).innerText =
+    "Compressed image will appear here.";
+
+    compressedBlob = null;
+}
+
+</script>
+
+</body>
+</html>

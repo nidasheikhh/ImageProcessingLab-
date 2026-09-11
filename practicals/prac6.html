@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practical 06 | IMAGE LAB</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #080b14;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    padding: 25px 8%;
+    border-bottom: 1px solid rgba(0,229,255,0.2);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span,
+.title h1 span {
+    color: #00e5ff;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.back {
+    color: #00e5ff;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.tag {
+    color: #00e5ff;
+    letter-spacing: 2px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.title h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.aim {
+    color: #aab3c2;
+    max-width: 750px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.panel h2 {
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: #111725;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid #263247;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+button {
+    padding: 11px 18px;
+    border: 1px solid #00e5ff;
+    background: transparent;
+    color: #00e5ff;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-2px);
+}
+
+.workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.image-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+}
+
+.image-box h3 {
+    color: #00e5ff;
+    margin-bottom: 15px;
+}
+
+canvas {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    background: #111725;
+    border-radius: 10px;
+    cursor: crosshair;
+}
+
+.info {
+    margin-top: 15px;
+    color: #aab3c2;
+    font-size: 14px;
+}
+
+.note {
+    margin-top: 15px;
+    padding: 12px;
+    border-left: 3px solid #00e5ff;
+    color: #aab3c2;
+    line-height: 1.5;
+    font-size: 13px;
+}
+
+.practical-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 50px auto 30px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 12px 25px;
+    border: 1px solid #00e5ff;
+    border-radius: 30px;
+    color: #00e5ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-3px);
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(0,229,255,0.15);
+    color: #8e98a8;
+    line-height: 1.8;
+}
+
+footer span {
+    color: #00e5ff;
+}
+
+@media (max-width:750px) {
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .title h1 {
+        font-size: 28px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        IMAGE<span>LAB</span>
+    </div>
+</header>
+
+<main class="container">
+
+<a href="../index.html" class="back">
+    ← Back to Home
+</a>
+
+<div class="title">
+
+    <p class="tag">PRACTICAL 06</p>
+
+    <h1>
+        Image <span>Inpainting</span>
+    </h1>
+
+    <p class="aim">
+        Restore damaged or missing portions of an image using
+        Telea and Navier-Stokes based inpainting techniques.
+    </p>
+
+</div>
+
+<div class="panel">
+
+    <h2>Upload Image & Mark Damage</h2>
+
+    <input
+        type="file"
+        id="upload"
+        accept="image/*"
+    >
+
+    <div class="buttons">
+
+        <button onclick="clearMarking()">
+            Clear Marking
+        </button>
+
+        <button onclick="applyTelea()">
+            Telea Inpainting
+        </button>
+
+        <button onclick="applyNS()">
+            Navier-Stokes
+        </button>
+
+        <button onclick="resetImage()">
+            Reset
+        </button>
+
+    </div>
+
+    <div class="note">
+        Upload an image and draw over the damaged area on the
+        left canvas. Then select an inpainting method.
+    </div>
+
+</div>
+
+<div class="workspace">
+
+    <div class="image-box">
+
+        <h3>Original / Marked Image</h3>
+
+        <canvas id="originalCanvas"></canvas>
+
+        <div class="info" id="originalInfo">
+            Upload an image to begin.
+        </div>
+
+    </div>
+
+    <div class="image-box">
+
+        <h3>Inpainted Image</h3>
+
+        <canvas id="processedCanvas"></canvas>
+
+        <div class="info" id="processedInfo">
+            Inpainted result will appear here.
+        </div>
+
+    </div>
+
+</div>
+
+<div class="practical-navigation">
+
+    <a href="../index.html" class="nav-btn">
+        ← Home
+    </a>
+
+    <a href="prac5.html" class="nav-btn">
+        ← Previous
+    </a>
+
+    <a href="prac7.html" class="nav-btn">
+        Next →
+    </a>
+
+</div>
+
+</main>
+
+<footer>
+
+<p>IMAGE<span>LAB</span></p>
+
+<p>Image Processing Techniques</p>
+
+<p>Nida Sheikh | CS25D020</p>
+
+</footer>
+
+<script>
+
+const upload =
+document.getElementById("upload");
+
+const originalCanvas =
+document.getElementById("originalCanvas");
+
+const processedCanvas =
+document.getElementById("processedCanvas");
+
+const originalCtx =
+originalCanvas.getContext("2d");
+
+const processedCtx =
+processedCanvas.getContext("2d");
+
+let image = null;
+let isDrawing = false;
+let mask = null;
+
+
+// ================= UPLOAD =================
+
+upload.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    image = new Image();
+
+    image.onload = function() {
+
+        originalCanvas.width = image.width;
+        originalCanvas.height = image.height;
+
+        processedCanvas.width = image.width;
+        processedCanvas.height = image.height;
+
+        originalCtx.drawImage(image, 0, 0);
+        processedCtx.drawImage(image, 0, 0);
+
+        createMask();
+
+        document.getElementById("originalInfo").innerText =
+        `Size: ${image.width} × ${image.height}`;
+
+        document.getElementById("processedInfo").innerText =
+        "Draw over the damaged area.";
+
+    };
+
+    image.src = URL.createObjectURL(file);
+
+});
+
+
+// ================= MASK =================
+
+function createMask() {
+
+    mask = document.createElement("canvas");
+
+    mask.width = originalCanvas.width;
+    mask.height = originalCanvas.height;
+
+    const ctx = mask.getContext("2d");
+
+    ctx.fillStyle = "black";
+
+    ctx.fillRect(
+        0,
+        0,
+        mask.width,
+        mask.height
+    );
+}
+
+
+// ================= MOUSE DRAW =================
+
+originalCanvas.addEventListener(
+    "mousedown",
+    function(e) {
+
+        if (!image) return;
+
+        isDrawing = true;
+
+        drawMask(e);
+
+    }
+);
+
+originalCanvas.addEventListener(
+    "mousemove",
+    function(e) {
+
+        if (!isDrawing) return;
+
+        drawMask(e);
+
+    }
+);
+
+window.addEventListener(
+    "mouseup",
+    function() {
+
+        isDrawing = false;
+
+    }
+);
+
+
+// ================= DRAW MASK =================
+
+function drawMask(e) {
+
+    const rect =
+    originalCanvas.getBoundingClientRect();
+
+    const scaleX =
+    originalCanvas.width / rect.width;
+
+    const scaleY =
+    originalCanvas.height / rect.height;
+
+    const x =
+    (e.clientX - rect.left) * scaleX;
+
+    const y =
+    (e.clientY - rect.top) * scaleY;
+
+    const radius = 15;
+
+    // Draw mask
+    const maskCtx =
+    mask.getContext("2d");
+
+    maskCtx.fillStyle = "white";
+
+    maskCtx.beginPath();
+
+    maskCtx.arc(
+        x,
+        y,
+        radius,
+        0,
+        Math.PI * 2
+    );
+
+    maskCtx.fill();
+
+    // Show red marking
+    originalCtx.fillStyle =
+    "rgba(255,0,0,0.45)";
+
+    originalCtx.beginPath();
+
+    originalCtx.arc(
+        x,
+        y,
+        radius,
+        0,
+        Math.PI * 2
+    );
+
+    originalCtx.fill();
+
+}
+
+
+// ================= CLEAR MARKING =================
+
+function clearMarking() {
+
+    if (!image) {
+
+        alert("Please upload an image first.");
+
+        return;
+    }
+
+    createMask();
+
+    originalCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Marking cleared.";
+}
+
+
+// ================= INPAINT DEMO =================
+
+function inpaint(method) {
+
+    if (!image) {
+
+        alert("Please upload an image first.");
+
+        return;
+    }
+
+    if (!mask) {
+
+        alert("Please mark the damaged area.");
+
+        return;
+    }
+
+    const src =
+    originalCtx.getImageData(
+        0,
+        0,
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const result =
+    new ImageData(
+        new Uint8ClampedArray(src.data),
+        src.width,
+        src.height
+    );
+
+    const maskCtx =
+    mask.getContext("2d");
+
+    const maskData =
+    maskCtx.getImageData(
+        0,
+        0,
+        mask.width,
+        mask.height
+    );
+
+    const w = src.width;
+    const h = src.height;
+
+    // Simple browser approximation
+    // of inpainting using nearby pixels.
+
+    for (let y = 1; y < h - 1; y++) {
+
+        for (let x = 1; x < w - 1; x++) {
+
+            const index =
+            (y * w + x) * 4;
+
+            if (maskData.data[index] > 0) {
+
+                let r = 0;
+                let g = 0;
+                let b = 0;
+                let count = 0;
+
+                const radius =
+                method === "telea" ? 2 : 3;
+
+                for (
+                    let dy = -radius;
+                    dy <= radius;
+                    dy++
+                ) {
+
+                    for (
+                        let dx = -radius;
+                        dx <= radius;
+                        dx++
+                    ) {
+
+                        if (
+                            dx === 0 &&
+                            dy === 0
+                        ) {
+                            continue;
+                        }
+
+                        const nx = x + dx;
+                        const ny = y + dy;
+
+                        if (
+                            nx >= 0 &&
+                            nx < w &&
+                            ny >= 0 &&
+                            ny < h
+                        ) {
+
+                            const nIndex =
+                            (ny * w + nx) * 4;
+
+                            if (
+                                maskData.data[nIndex] === 0
+                            ) {
+
+                                r +=
+                                src.data[nIndex];
+
+                                g +=
+                                src.data[nIndex + 1];
+
+                                b +=
+                                src.data[nIndex + 2];
+
+                                count++;
+                            }
+                        }
+                    }
+                }
+
+                if (count > 0) {
+
+                    result.data[index] =
+                    r / count;
+
+                    result.data[index + 1] =
+                    g / count;
+
+                    result.data[index + 2] =
+                    b / count;
+
+                    result.data[index + 3] =
+                    255;
+                }
+            }
+        }
+    }
+
+    processedCtx.putImageData(
+        result,
+        0,
+        0
+    );
+
+    if (method === "telea") {
+
+        document.getElementById(
+            "processedInfo"
+        ).innerText =
+        "Telea inpainting applied.";
+
+    } else {
+
+        document.getElementById(
+            "processedInfo"
+        ).innerText =
+        "Navier-Stokes inpainting applied.";
+
+    }
+}
+
+
+// ================= TELEA =================
+
+function applyTelea() {
+
+    inpaint("telea");
+
+}
+
+
+// ================= NAVIER-STOKES =================
+
+function applyNS() {
+
+    inpaint("ns");
+
+}
+
+
+// ================= RESET =================
+
+function resetImage() {
+
+    if (!image) {
+
+        alert("Please upload an image first.");
+
+        return;
+    }
+
+    originalCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    createMask();
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Image reset successfully.";
+}
+
+</script>
+
+</body>
+</html>

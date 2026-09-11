@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practical 05 | IMAGE LAB</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #080b14;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    padding: 25px 8%;
+    border-bottom: 1px solid rgba(0,229,255,0.2);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span,
+.title h1 span {
+    color: #00e5ff;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.back {
+    color: #00e5ff;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.tag {
+    color: #00e5ff;
+    letter-spacing: 2px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.title h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.aim {
+    color: #aab3c2;
+    max-width: 750px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.panel h2 {
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: #111725;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid #263247;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+button {
+    padding: 11px 18px;
+    border: 1px solid #00e5ff;
+    background: transparent;
+    color: #00e5ff;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-2px);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.image-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+}
+
+.image-box h3 {
+    color: #00e5ff;
+    margin-bottom: 15px;
+}
+
+canvas {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    background: #111725;
+    border-radius: 10px;
+}
+
+.info {
+    margin-top: 15px;
+    color: #aab3c2;
+    font-size: 14px;
+}
+
+.practical-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 50px auto 30px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 12px 25px;
+    border: 1px solid #00e5ff;
+    border-radius: 30px;
+    color: #00e5ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-3px);
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(0,229,255,0.15);
+    color: #8e98a8;
+    line-height: 1.8;
+}
+
+footer span {
+    color: #00e5ff;
+}
+
+@media (max-width:750px) {
+    .image-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .title h1 {
+        font-size: 28px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        IMAGE<span>LAB</span>
+    </div>
+</header>
+
+<main class="container">
+
+<a href="../index.html" class="back">
+    ← Back to Home
+</a>
+
+<div class="title">
+
+    <p class="tag">PRACTICAL 05</p>
+
+    <h1>
+        Spatial <span>Filters</span>
+    </h1>
+
+    <p class="aim">
+        Apply averaging, Gaussian, median and bilateral
+        filters to reduce noise and improve image quality.
+    </p>
+
+</div>
+
+<div class="panel">
+
+    <h2>Upload & Apply Filter</h2>
+
+    <input
+        type="file"
+        id="upload"
+        accept="image/*"
+    >
+
+    <div class="buttons">
+
+        <button onclick="applyAverage()">
+            Averaging
+        </button>
+
+        <button onclick="applyGaussian()">
+            Gaussian
+        </button>
+
+        <button onclick="applyMedian()">
+            Median
+        </button>
+
+        <button onclick="applyBilateral()">
+            Bilateral
+        </button>
+
+        <button onclick="resetImage()">
+            Reset
+        </button>
+
+    </div>
+
+</div>
+
+<div class="image-grid">
+
+    <div class="image-box">
+
+        <h3>Original Image</h3>
+
+        <canvas id="originalCanvas"></canvas>
+
+        <div class="info" id="originalInfo">
+            Upload an image to begin.
+        </div>
+
+    </div>
+
+    <div class="image-box">
+
+        <h3>Filtered Image</h3>
+
+        <canvas id="processedCanvas"></canvas>
+
+        <div class="info" id="processedInfo">
+            Filtered image will appear here.
+        </div>
+
+    </div>
+
+</div>
+
+<div class="practical-navigation">
+
+    <a href="../index.html" class="nav-btn">
+        ← Home
+    </a>
+
+    <a href="prac4.html" class="nav-btn">
+        ← Previous
+    </a>
+
+    <a href="prac6.html" class="nav-btn">
+        Next →
+    </a>
+
+</div>
+
+</main>
+
+<footer>
+
+<p>IMAGE<span>LAB</span></p>
+
+<p>Image Processing Techniques</p>
+
+<p>Nida Sheikh | CS25D020</p>
+
+</footer>
+
+<script>
+
+const upload =
+document.getElementById("upload");
+
+const originalCanvas =
+document.getElementById("originalCanvas");
+
+const processedCanvas =
+document.getElementById("processedCanvas");
+
+const originalCtx =
+originalCanvas.getContext("2d");
+
+const processedCtx =
+processedCanvas.getContext("2d");
+
+let image = null;
+
+
+// ================= UPLOAD =================
+
+upload.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    image = new Image();
+
+    image.onload = function() {
+
+        originalCanvas.width = image.width;
+        originalCanvas.height = image.height;
+
+        processedCanvas.width = image.width;
+        processedCanvas.height = image.height;
+
+        originalCtx.drawImage(image, 0, 0);
+        processedCtx.drawImage(image, 0, 0);
+
+        document.getElementById("originalInfo").innerText =
+        `Size: ${image.width} × ${image.height}`;
+
+        document.getElementById("processedInfo").innerText =
+        "Ready for filtering.";
+
+    };
+
+    image.src = URL.createObjectURL(file);
+
+});
+
+
+// ================= CHECK =================
+
+function checkImage() {
+
+    if (!image) {
+
+        alert("Please upload an image first.");
+
+        return false;
+    }
+
+    return true;
+}
+
+
+// ================= GET PIXEL =================
+
+function getPixel(data, x, y, w) {
+
+    x = Math.max(0, Math.min(w - 1, x));
+    y = Math.max(0, Math.min(data.height - 1, y));
+
+    const index = (y * w + x) * 4;
+
+    return [
+        data.data[index],
+        data.data[index + 1],
+        data.data[index + 2]
+    ];
+}
+
+
+// ================= AVERAGING =================
+
+function applyAverage() {
+
+    if (!checkImage()) return;
+
+    const src =
+    originalCtx.getImageData(
+        0,
+        0,
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const output =
+    processedCtx.createImageData(
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const w = originalCanvas.width;
+    const h = originalCanvas.height;
+
+    for (let y = 0; y < h; y++) {
+
+        for (let x = 0; x < w; x++) {
+
+            let r = 0;
+            let g = 0;
+            let b = 0;
+            let count = 0;
+
+            for (let dy = -1; dy <= 1; dy++) {
+
+                for (let dx = -1; dx <= 1; dx++) {
+
+                    const nx = Math.max(
+                        0,
+                        Math.min(w - 1, x + dx)
+                    );
+
+                    const ny = Math.max(
+                        0,
+                        Math.min(h - 1, y + dy)
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    r += src.data[index];
+                    g += src.data[index + 1];
+                    b += src.data[index + 2];
+
+                    count++;
+                }
+            }
+
+            const index =
+            (y * w + x) * 4;
+
+            output.data[index] = r / count;
+            output.data[index + 1] = g / count;
+            output.data[index + 2] = b / count;
+            output.data[index + 3] = 255;
+        }
+    }
+
+    processedCtx.putImageData(output, 0, 0);
+
+    document.getElementById("processedInfo").innerText =
+    "3 × 3 Averaging filter applied.";
+}
+
+
+// ================= GAUSSIAN =================
+
+function applyGaussian() {
+
+    if (!checkImage()) return;
+
+    const src =
+    originalCtx.getImageData(
+        0,
+        0,
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const output =
+    processedCtx.createImageData(
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const w = originalCanvas.width;
+    const h = originalCanvas.height;
+
+    const kernel = [
+        1, 2, 1,
+        2, 4, 2,
+        1, 2, 1
+    ];
+
+    for (let y = 0; y < h; y++) {
+
+        for (let x = 0; x < w; x++) {
+
+            let r = 0;
+            let g = 0;
+            let b = 0;
+            let weightSum = 0;
+
+            for (let ky = -1; ky <= 1; ky++) {
+
+                for (let kx = -1; kx <= 1; kx++) {
+
+                    const nx = Math.max(
+                        0,
+                        Math.min(w - 1, x + kx)
+                    );
+
+                    const ny = Math.max(
+                        0,
+                        Math.min(h - 1, y + ky)
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    const weight =
+                    kernel[(ky + 1) * 3 + (kx + 1)];
+
+                    r += src.data[index] * weight;
+                    g += src.data[index + 1] * weight;
+                    b += src.data[index + 2] * weight;
+
+                    weightSum += weight;
+                }
+            }
+
+            const index =
+            (y * w + x) * 4;
+
+            output.data[index] =
+            r / weightSum;
+
+            output.data[index + 1] =
+            g / weightSum;
+
+            output.data[index + 2] =
+            b / weightSum;
+
+            output.data[index + 3] = 255;
+        }
+    }
+
+    processedCtx.putImageData(output, 0, 0);
+
+    document.getElementById("processedInfo").innerText =
+    "3 × 3 Gaussian filter applied.";
+}
+
+
+// ================= MEDIAN =================
+
+function applyMedian() {
+
+    if (!checkImage()) return;
+
+    const src =
+    originalCtx.getImageData(
+        0,
+        0,
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const output =
+    processedCtx.createImageData(
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const w = originalCanvas.width;
+    const h = originalCanvas.height;
+
+    for (let y = 0; y < h; y++) {
+
+        for (let x = 0; x < w; x++) {
+
+            let r = [];
+            let g = [];
+            let b = [];
+
+            for (let dy = -1; dy <= 1; dy++) {
+
+                for (let dx = -1; dx <= 1; dx++) {
+
+                    const nx = Math.max(
+                        0,
+                        Math.min(w - 1, x + dx)
+                    );
+
+                    const ny = Math.max(
+                        0,
+                        Math.min(h - 1, y + dy)
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    r.push(src.data[index]);
+                    g.push(src.data[index + 1]);
+                    b.push(src.data[index + 2]);
+                }
+            }
+
+            r.sort((a,b) => a-b);
+            g.sort((a,b) => a-b);
+            b.sort((a,b) => a-b);
+
+            const mid = 4;
+
+            const index =
+            (y * w + x) * 4;
+
+            output.data[index] = r[mid];
+            output.data[index + 1] = g[mid];
+            output.data[index + 2] = b[mid];
+            output.data[index + 3] = 255;
+        }
+    }
+
+    processedCtx.putImageData(output, 0, 0);
+
+    document.getElementById("processedInfo").innerText =
+    "3 × 3 Median filter applied.";
+}
+
+
+// ================= BILATERAL =================
+
+function applyBilateral() {
+
+    if (!checkImage()) return;
+
+    const src =
+    originalCtx.getImageData(
+        0,
+        0,
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const output =
+    processedCtx.createImageData(
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    const w = originalCanvas.width;
+    const h = originalCanvas.height;
+
+    const sigmaSpatial = 2;
+    const sigmaColor = 50;
+
+    for (let y = 0; y < h; y++) {
+
+        for (let x = 0; x < w; x++) {
+
+            const centerIndex =
+            (y * w + x) * 4;
+
+            const cr = src.data[centerIndex];
+            const cg = src.data[centerIndex + 1];
+            const cb = src.data[centerIndex + 2];
+
+            let r = 0;
+            let g = 0;
+            let b = 0;
+            let totalWeight = 0;
+
+            for (let dy = -1; dy <= 1; dy++) {
+
+                for (let dx = -1; dx <= 1; dx++) {
+
+                    const nx = Math.max(
+                        0,
+                        Math.min(w - 1, x + dx)
+                    );
+
+                    const ny = Math.max(
+                        0,
+                        Math.min(h - 1, y + dy)
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    const nr = src.data[index];
+                    const ng = src.data[index + 1];
+                    const nb = src.data[index + 2];
+
+                    const spatial =
+                    Math.exp(
+                        -(dx * dx + dy * dy) /
+                        (2 * sigmaSpatial * sigmaSpatial)
+                    );
+
+                    const colorDistance =
+                    (nr - cr) ** 2 +
+                    (ng - cg) ** 2 +
+                    (nb - cb) ** 2;
+
+                    const color =
+                    Math.exp(
+                        -colorDistance /
+                        (2 * sigmaColor * sigmaColor)
+                    );
+
+                    const weight =
+                    spatial * color;
+
+                    r += nr * weight;
+                    g += ng * weight;
+                    b += nb * weight;
+
+                    totalWeight += weight;
+                }
+            }
+
+            const outIndex =
+            (y * w + x) * 4;
+
+            output.data[outIndex] =
+            r / totalWeight;
+
+            output.data[outIndex + 1] =
+            g / totalWeight;
+
+            output.data[outIndex + 2] =
+            b / totalWeight;
+
+            output.data[outIndex + 3] = 255;
+        }
+    }
+
+    processedCtx.putImageData(output, 0, 0);
+
+    document.getElementById("processedInfo").innerText =
+    "Bilateral filter applied to reduce noise while preserving edges.";
+}
+
+
+// ================= RESET =================
+
+function resetImage() {
+
+    if (!checkImage()) return;
+
+    originalCanvas.width = image.width;
+    originalCanvas.height = image.height;
+
+    processedCanvas.width = image.width;
+    processedCanvas.height = image.height;
+
+    originalCtx.drawImage(image, 0, 0);
+    processedCtx.drawImage(image, 0, 0);
+
+    document.getElementById("processedInfo").innerText =
+    "Image reset successfully.";
+}
+
+</script>
+
+</body>
+</html>

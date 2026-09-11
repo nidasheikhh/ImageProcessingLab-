@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical 02 | IMAGE LAB</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b14;
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 25px 8%;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #00e5ff;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .back {
+            display: inline-block;
+            color: #00e5ff;
+            text-decoration: none;
+            margin-bottom: 25px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .title p {
+            color: #00e5ff;
+            letter-spacing: 2px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .title h1 {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .title h1 span {
+            color: #00e5ff;
+        }
+
+        .aim {
+            color: #aab3c2;
+            max-width: 750px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .panel h2 {
+            color: #00e5ff;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: #111725;
+            color: white;
+            border-radius: 10px;
+            border: 1px solid #263247;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        button {
+            padding: 11px 18px;
+            border: 1px solid #00e5ff;
+            background: transparent;
+            color: #00e5ff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00e5ff;
+            color: #080b14;
+            transform: translateY(-2px);
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .image-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .image-box h3 {
+            color: #00e5ff;
+            margin-bottom: 15px;
+        }
+
+        canvas {
+            width: 100%;
+            max-height: 450px;
+            object-fit: contain;
+            background: #111725;
+            border-radius: 10px;
+        }
+
+        .info {
+            margin-top: 15px;
+            color: #aab3c2;
+            font-size: 14px;
+        }
+
+        .practical-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 50px auto 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border: 1px solid #00e5ff;
+            border-radius: 30px;
+            color: #00e5ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #00e5ff;
+            color: #080b14;
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(0, 229, 255, 0.15);
+            color: #8e98a8;
+            line-height: 1.8;
+        }
+
+        footer span {
+            color: #00e5ff;
+        }
+
+        @media (max-width: 750px) {
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title h1 {
+                font-size: 28px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        IMAGE<span>LAB</span>
+    </div>
+</header>
+
+
+<main class="container">
+
+    <a href="../index.html" class="back">
+        ← Back to Home
+    </a>
+
+
+    <div class="title">
+
+        <p>PRACTICAL 02</p>
+
+        <h1>
+            Geometric <span>Transformations</span>
+        </h1>
+
+        <p class="aim">
+            Perform translation, rotation, scaling, shearing,
+            reflection and cropping on digital images.
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>Upload & Transform Image</h2>
+
+        <input
+            type="file"
+            id="upload"
+            accept="image/*"
+        >
+
+        <div class="buttons">
+
+            <button onclick="translateImage()">
+                Translation
+            </button>
+
+            <button onclick="rotateImage()">
+                Rotation
+            </button>
+
+            <button onclick="scaleImage()">
+                Scaling
+            </button>
+
+            <button onclick="shearImage()">
+                Shearing
+            </button>
+
+            <button onclick="reflectImage()">
+                Reflection
+            </button>
+
+            <button onclick="cropImage()">
+                Cropping
+            </button>
+
+            <button onclick="resetImage()">
+                Reset
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="image-grid">
+
+        <div class="image-box">
+
+            <h3>Original Image</h3>
+
+            <canvas id="originalCanvas"></canvas>
+
+            <div class="info" id="originalInfo">
+                Upload an image to begin.
+            </div>
+
+        </div>
+
+
+        <div class="image-box">
+
+            <h3>Transformed Image</h3>
+
+            <canvas id="processedCanvas"></canvas>
+
+            <div class="info" id="processedInfo">
+                Transformation will appear here.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="practical-navigation">
+
+        <a href="../index.html" class="nav-btn">
+            ← Home
+        </a>
+
+        <a href="prac1.html" class="nav-btn">
+            ← Previous
+        </a>
+
+        <a href="prac3.html" class="nav-btn">
+            Next →
+        </a>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <p>
+        IMAGE<span>LAB</span>
+    </p>
+
+    <p>
+        Image Processing Techniques
+    </p>
+
+    <p>
+        Nida Sheikh | CS25D020
+    </p>
+
+</footer>
+
+
+<script>
+
+const upload =
+    document.getElementById("upload");
+
+const originalCanvas =
+    document.getElementById("originalCanvas");
+
+const processedCanvas =
+    document.getElementById("processedCanvas");
+
+const originalCtx =
+    originalCanvas.getContext("2d");
+
+const processedCtx =
+    processedCanvas.getContext("2d");
+
+let image = null;
+
+
+upload.addEventListener("change", function () {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    image = new Image();
+
+    image.onload = function () {
+
+        originalCanvas.width = image.width;
+        originalCanvas.height = image.height;
+
+        processedCanvas.width = image.width;
+        processedCanvas.height = image.height;
+
+        originalCtx.drawImage(image, 0, 0);
+
+        processedCtx.drawImage(image, 0, 0);
+
+        document.getElementById("originalInfo").innerText =
+            `Size: ${image.width} × ${image.height}`;
+
+        document.getElementById("processedInfo").innerText =
+            "Ready for transformation.";
+
+    };
+
+    image.src = URL.createObjectURL(file);
+
+});
+
+
+function checkImage() {
+
+    if (!image) {
+        alert("Please upload an image first.");
+        return false;
+    }
+
+    return true;
+}
+
+
+// ================= TRANSLATION =================
+
+function translateImage() {
+
+    if (!checkImage()) return;
+
+    processedCtx.clearRect(
+        0,
+        0,
+        processedCanvas.width,
+        processedCanvas.height
+    );
+
+    processedCtx.drawImage(
+        image,
+        40,
+        30
+    );
+
+    document.getElementById("processedInfo").innerText =
+        "Image translated by X = 40 and Y = 30 pixels.";
+}
+
+
+// ================= ROTATION =================
+
+function rotateImage() {
+
+    if (!checkImage()) return;
+
+    processedCtx.clearRect(
+        0,
+        0,
+        processedCanvas.width,
+        processedCanvas.height
+    );
+
+    processedCtx.save();
+
+    processedCtx.translate(
+        processedCanvas.width / 2,
+        processedCanvas.height / 2
+    );
+
+    processedCtx.rotate(
+        45 * Math.PI / 180
+    );
+
+    processedCtx.drawImage(
+        image,
+        -image.width / 2,
+        -image.height / 2
+    );
+
+    processedCtx.restore();
+
+    document.getElementById("processedInfo").innerText =
+        "Image rotated by 45 degrees.";
+}
+
+
+// ================= SCALING =================
+
+function scaleImage() {
+
+    if (!checkImage()) return;
+
+    processedCtx.clearRect(
+        0,
+        0,
+        processedCanvas.width,
+        processedCanvas.height
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0,
+        image.width * 0.7,
+        image.height * 0.7
+    );
+
+    document.getElementById("processedInfo").innerText =
+        "Image scaled to 70% of original size.";
+}
+
+
+// ================= SHEARING =================
+
+function shearImage() {
+
+    if (!checkImage()) return;
+
+    processedCtx.clearRect(
+        0,
+        0,
+        processedCanvas.width,
+        processedCanvas.height
+    );
+
+    processedCtx.save();
+
+    processedCtx.transform(
+        1,
+        0,
+        0.3,
+        1,
+        0,
+        0
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    processedCtx.restore();
+
+    document.getElementById("processedInfo").innerText =
+        "Horizontal shearing applied.";
+}
+
+
+// ================= REFLECTION =================
+
+function reflectImage() {
+
+    if (!checkImage()) return;
+
+    processedCtx.clearRect(
+        0,
+        0,
+        processedCanvas.width,
+        processedCanvas.height
+    );
+
+    processedCtx.save();
+
+    processedCtx.translate(
+        processedCanvas.width,
+        0
+    );
+
+    processedCtx.scale(
+        -1,
+        1
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    processedCtx.restore();
+
+    document.getElementById("processedInfo").innerText =
+        "Horizontal reflection applied.";
+}
+
+
+// ================= CROPPING =================
+
+function cropImage() {
+
+    if (!checkImage()) return;
+
+    const cropWidth =
+        image.width * 0.6;
+
+    const cropHeight =
+        image.height * 0.6;
+
+    const startX =
+        image.width * 0.2;
+
+    const startY =
+        image.height * 0.2;
+
+    processedCanvas.width =
+        cropWidth;
+
+    processedCanvas.height =
+        cropHeight;
+
+    processedCtx.drawImage(
+        image,
+        startX,
+        startY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        cropWidth,
+        cropHeight
+    );
+
+    document.getElementById("processedInfo").innerText =
+        "Center 60% of the image cropped.";
+}
+
+
+// ================= RESET =================
+
+function resetImage() {
+
+    if (!checkImage()) return;
+
+    originalCanvas.width =
+        image.width;
+
+    originalCanvas.height =
+        image.height;
+
+    processedCanvas.width =
+        image.width;
+
+    processedCanvas.height =
+        image.height;
+
+    originalCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    document.getElementById("processedInfo").innerText =
+        "Image reset successfully.";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Practical 08 | IMAGE LAB</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #080b14;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    padding: 25px 8%;
+    border-bottom: 1px solid rgba(0,229,255,0.2);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span,
+.title h1 span {
+    color: #00e5ff;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.back {
+    color: #00e5ff;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.tag {
+    color: #00e5ff;
+    letter-spacing: 2px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.title h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.aim {
+    color: #aab3c2;
+    max-width: 750px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.panel h2 {
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: #111725;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid #263247;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+button {
+    padding: 11px 18px;
+    border: 1px solid #00e5ff;
+    background: transparent;
+    color: #00e5ff;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-2px);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.image-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+}
+
+.image-box h3 {
+    color: #00e5ff;
+    margin-bottom: 15px;
+}
+
+canvas {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    background: #111725;
+    border-radius: 10px;
+}
+
+.info {
+    margin-top: 15px;
+    color: #aab3c2;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.note {
+    margin-top: 18px;
+    color: #8e98a8;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.practical-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 50px auto 30px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 12px 25px;
+    border: 1px solid #00e5ff;
+    border-radius: 30px;
+    color: #00e5ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    background: #00e5ff;
+    color: #080b14;
+    transform: translateY(-3px);
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(0,229,255,0.15);
+    color: #8e98a8;
+    line-height: 1.8;
+}
+
+footer span {
+    color: #00e5ff;
+}
+
+@media (max-width:750px) {
+
+    .image-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .title h1 {
+        font-size: 28px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        IMAGE<span>LAB</span>
+    </div>
+</header>
+
+<main class="container">
+
+<a href="../index.html" class="back">
+    ← Back to Home
+</a>
+
+<div class="title">
+
+    <p class="tag">PRACTICAL 08</p>
+
+    <h1>
+        Morphological <span>Operations</span>
+    </h1>
+
+    <p class="aim">
+        Perform erosion, dilation, opening and closing operations
+        on binary images using a 3 × 3 structuring element.
+    </p>
+
+</div>
+
+
+<div class="panel">
+
+    <h2>Upload & Apply Morphology</h2>
+
+    <input
+        type="file"
+        id="upload"
+        accept="image/*"
+    >
+
+    <div class="buttons">
+
+        <button onclick="convertBinary()">
+            Binary Image
+        </button>
+
+        <button onclick="applyErosion()">
+            Erosion
+        </button>
+
+        <button onclick="applyDilation()">
+            Dilation
+        </button>
+
+        <button onclick="applyOpening()">
+            Opening
+        </button>
+
+        <button onclick="applyClosing()">
+            Closing
+        </button>
+
+        <button onclick="resetImage()">
+            Reset
+        </button>
+
+    </div>
+
+    <p class="note">
+        Morphological operations are performed on a binary image
+        using a 3 × 3 structuring element.
+    </p>
+
+</div>
+
+
+<div class="image-grid">
+
+    <div class="image-box">
+
+        <h3>Original Binary Image</h3>
+
+        <canvas id="originalCanvas"></canvas>
+
+        <div class="info" id="originalInfo">
+            Upload an image to begin.
+        </div>
+
+    </div>
+
+
+    <div class="image-box">
+
+        <h3>Processed Image</h3>
+
+        <canvas id="processedCanvas"></canvas>
+
+        <div class="info" id="processedInfo">
+            Select a morphological operation.
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="practical-navigation">
+
+    <a href="../index.html" class="nav-btn">
+        ← Home
+    </a>
+
+    <a href="prac7.html" class="nav-btn">
+        ← Previous
+    </a>
+
+    <a href="prac9.html" class="nav-btn">
+        Next →
+    </a>
+
+</div>
+
+</main>
+
+
+<footer>
+
+<p>IMAGE<span>LAB</span></p>
+
+<p>Image Processing Techniques</p>
+
+<p>Nida Sheikh | CS25D020</p>
+
+</footer>
+
+
+<script>
+
+const upload =
+document.getElementById("upload");
+
+const originalCanvas =
+document.getElementById("originalCanvas");
+
+const processedCanvas =
+document.getElementById("processedCanvas");
+
+const originalCtx =
+originalCanvas.getContext("2d");
+
+const processedCtx =
+processedCanvas.getContext("2d");
+
+let image = null;
+
+
+// ================= UPLOAD =================
+
+upload.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    image = new Image();
+
+    image.onload = function() {
+
+        originalCanvas.width = image.width;
+        originalCanvas.height = image.height;
+
+        processedCanvas.width = image.width;
+        processedCanvas.height = image.height;
+
+        originalCtx.drawImage(
+            image,
+            0,
+            0
+        );
+
+        convertBinary();
+
+        document.getElementById(
+            "originalInfo"
+        ).innerText =
+        `Size: ${image.width} × ${image.height}`;
+
+    };
+
+    image.src =
+    URL.createObjectURL(file);
+
+});
+
+
+// ================= CHECK =================
+
+function checkImage() {
+
+    if (!image) {
+
+        alert(
+            "Please upload an image first."
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+
+// ================= BINARY =================
+
+function getBinaryImage() {
+
+    const data =
+    originalCtx.getImageData(
+        0,
+        0,
+        originalCanvas.width,
+        originalCanvas.height
+    );
+
+    for (
+        let i = 0;
+        i < data.data.length;
+        i += 4
+    ) {
+
+        const gray =
+        0.299 * data.data[i] +
+        0.587 * data.data[i + 1] +
+        0.114 * data.data[i + 2];
+
+        const value =
+        gray >= 128 ? 255 : 0;
+
+        data.data[i] = value;
+        data.data[i + 1] = value;
+        data.data[i + 2] = value;
+        data.data[i + 3] = 255;
+    }
+
+    return data;
+}
+
+
+function convertBinary() {
+
+    if (!checkImage()) return;
+
+    const binary =
+    getBinaryImage();
+
+    originalCtx.putImageData(
+        binary,
+        0,
+        0
+    );
+
+    processedCtx.putImageData(
+        binary,
+        0,
+        0
+    );
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Binary image created using threshold 128.";
+}
+
+
+// ================= MORPHOLOGY =================
+
+function morphology(type) {
+
+    if (!checkImage()) return;
+
+    const src =
+    getBinaryImage();
+
+    const w =
+    originalCanvas.width;
+
+    const h =
+    originalCanvas.height;
+
+    const output =
+    processedCtx.createImageData(
+        w,
+        h
+    );
+
+    for (
+        let y = 0;
+        y < h;
+        y++
+    ) {
+
+        for (
+            let x = 0;
+            x < w;
+            x++
+        ) {
+
+            let values = [];
+
+            for (
+                let dy = -1;
+                dy <= 1;
+                dy++
+            ) {
+
+                for (
+                    let dx = -1;
+                    dx <= 1;
+                    dx++
+                ) {
+
+                    const nx =
+                    Math.max(
+                        0,
+                        Math.min(
+                            w - 1,
+                            x + dx
+                        )
+                    );
+
+                    const ny =
+                    Math.max(
+                        0,
+                        Math.min(
+                            h - 1,
+                            y + dy
+                        )
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    values.push(
+                        src.data[index]
+                    );
+                }
+            }
+
+            let value;
+
+            if (type === "erosion") {
+
+                value =
+                Math.min(...values);
+
+            } else {
+
+                value =
+                Math.max(...values);
+
+            }
+
+            const index =
+            (y * w + x) * 4;
+
+            output.data[index] =
+            value;
+
+            output.data[index + 1] =
+            value;
+
+            output.data[index + 2] =
+            value;
+
+            output.data[index + 3] =
+            255;
+        }
+    }
+
+    processedCtx.putImageData(
+        output,
+        0,
+        0
+    );
+
+    return output;
+}
+
+
+// ================= EROSION =================
+
+function applyErosion() {
+
+    const result =
+    morphology("erosion");
+
+    if (!result) return;
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Erosion applied using a 3 × 3 structuring element.";
+}
+
+
+// ================= DILATION =================
+
+function applyDilation() {
+
+    const result =
+    morphology("dilation");
+
+    if (!result) return;
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Dilation applied using a 3 × 3 structuring element.";
+}
+
+
+// ================= OPENING =================
+
+function applyOpening() {
+
+    if (!checkImage()) return;
+
+    const eroded =
+    morphology("erosion");
+
+    if (!eroded) return;
+
+    const w =
+    originalCanvas.width;
+
+    const h =
+    originalCanvas.height;
+
+    const output =
+    processedCtx.createImageData(
+        w,
+        h
+    );
+
+    for (
+        let y = 0;
+        y < h;
+        y++
+    ) {
+
+        for (
+            let x = 0;
+            x < w;
+            x++
+        ) {
+
+            let maxValue = 0;
+
+            for (
+                let dy = -1;
+                dy <= 1;
+                dy++
+            ) {
+
+                for (
+                    let dx = -1;
+                    dx <= 1;
+                    dx++
+                ) {
+
+                    const nx =
+                    Math.max(
+                        0,
+                        Math.min(
+                            w - 1,
+                            x + dx
+                        )
+                    );
+
+                    const ny =
+                    Math.max(
+                        0,
+                        Math.min(
+                            h - 1,
+                            y + dy
+                        )
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    maxValue =
+                    Math.max(
+                        maxValue,
+                        eroded.data[index]
+                    );
+                }
+            }
+
+            const index =
+            (y * w + x) * 4;
+
+            output.data[index] =
+            maxValue;
+
+            output.data[index + 1] =
+            maxValue;
+
+            output.data[index + 2] =
+            maxValue;
+
+            output.data[index + 3] =
+            255;
+        }
+    }
+
+    processedCtx.putImageData(
+        output,
+        0,
+        0
+    );
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Opening applied: erosion followed by dilation.";
+}
+
+
+// ================= CLOSING =================
+
+function applyClosing() {
+
+    if (!checkImage()) return;
+
+    const src =
+    getBinaryImage();
+
+    const w =
+    originalCanvas.width;
+
+    const h =
+    originalCanvas.height;
+
+    const dilated =
+    createMorphResult(
+        src,
+        w,
+        h,
+        "dilation"
+    );
+
+    const output =
+    createMorphResult(
+        dilated,
+        w,
+        h,
+        "erosion"
+    );
+
+    processedCtx.putImageData(
+        output,
+        0,
+        0
+    );
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Closing applied: dilation followed by erosion.";
+}
+
+
+// ================= MORPH RESULT =================
+
+function createMorphResult(
+    src,
+    w,
+    h,
+    type
+) {
+
+    const output =
+    processedCtx.createImageData(
+        w,
+        h
+    );
+
+    for (
+        let y = 0;
+        y < h;
+        y++
+    ) {
+
+        for (
+            let x = 0;
+            x < w;
+            x++
+        ) {
+
+            let value;
+
+            if (type === "dilation") {
+
+                value = 0;
+
+            } else {
+
+                value = 255;
+
+            }
+
+            for (
+                let dy = -1;
+                dy <= 1;
+                dy++
+            ) {
+
+                for (
+                    let dx = -1;
+                    dx <= 1;
+                    dx++
+                ) {
+
+                    const nx =
+                    Math.max(
+                        0,
+                        Math.min(
+                            w - 1,
+                            x + dx
+                        )
+                    );
+
+                    const ny =
+                    Math.max(
+                        0,
+                        Math.min(
+                            h - 1,
+                            y + dy
+                        )
+                    );
+
+                    const index =
+                    (ny * w + nx) * 4;
+
+                    if (type === "dilation") {
+
+                        value =
+                        Math.max(
+                            value,
+                            src.data[index]
+                        );
+
+                    } else {
+
+                        value =
+                        Math.min(
+                            value,
+                            src.data[index]
+                        );
+                    }
+                }
+            }
+
+            const index =
+            (y * w + x) * 4;
+
+            output.data[index] =
+            value;
+
+            output.data[index + 1] =
+            value;
+
+            output.data[index + 2] =
+            value;
+
+            output.data[index + 3] =
+            255;
+        }
+    }
+
+    return output;
+}
+
+
+// ================= RESET =================
+
+function resetImage() {
+
+    if (!checkImage()) return;
+
+    originalCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    processedCtx.drawImage(
+        image,
+        0,
+        0
+    );
+
+    document.getElementById(
+        "originalInfo"
+    ).innerText =
+    `Size: ${image.width} × ${image.height}`;
+
+    document.getElementById(
+        "processedInfo"
+    ).innerText =
+    "Image reset successfully.";
+}
+
+</script>
+
+</body>
+</html>
